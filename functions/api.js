@@ -135,6 +135,30 @@ router.get("/produk", async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 });
+
+router.post('/produk', async (req, res) => {
+  try {
+    const { namaProduk, img, hargaJual, hargaBeli, kategori, deskripsi, stock } = req.body;
+
+    // Buat objek produk baru
+    const newProduk = new Produk({
+      namaProduk,
+      img,
+      hargaJual,
+      hargaBeli,
+      kategori,
+      deskripsi,
+      stock
+    });
+
+    // Simpan produk ke database
+    await newProduk.save();
+
+    res.status(201).json({ message: 'Produk berhasil ditambahkan', data: newProduk });
+  } catch (error) {
+    res.status(500).json({ message: 'Gagal menambahkan produk', error: error.message });
+  }
+});
 router.get("/transaksi/:id", async (req, res) => {
   try {
     id = req.params.id;
@@ -187,6 +211,35 @@ router.post("/register", [checkDuplicateUsernameOrEmail], (req, res) => {
     }
   });
 });
+
+router.put('/produk/:id', async (req, res) => {
+  try {
+    const productId = req.params.id; 
+    const { namaProduk, img, hargaJual, hargaBeli, kategori, deskripsi, stock } = req.body;
+
+    const produk = await Produk.findById(productId);
+
+    if (!produk) {
+      return res.status(404).json({ message: 'Produk tidak ditemukan' });
+    }
+
+    // Memperbarui properti produk
+    produk.namaProduk = namaProduk;
+    produk.img = img;
+    produk.hargaJual = hargaJual;
+    produk.hargaBeli = hargaBeli;
+    produk.kategori = kategori;
+    produk.deskripsi = deskripsi;
+    produk.stock = stock;
+
+    await produk.save();
+
+    res.status(200).json({ message: 'Produk berhasil diperbarui', data: produk });
+  } catch (error) {
+    res.status(500).json({ message: 'Gagal memperbarui produk', error: error.message });
+  }
+});
+
 
 router.post("/login", (req, res) => {
   User.findOne({
