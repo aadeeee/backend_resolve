@@ -55,8 +55,6 @@ const UserSchema = new mongoose.Schema({
   password: String,
   profilePictures: String,
   jadwal: String,
-  isOwner: Boolean,
-  isActive: Boolean,
 });
 
 const User = mongoose.model("User", UserSchema);
@@ -127,6 +125,37 @@ router.get("/transaksi", async (req, res) => {
   }
 });
 
+router.post("/transaksi", async (req, res) => {
+  try {
+    const {
+      nomorAntrian,
+      inProcess,
+      metodePembayaran,
+      date,
+      time,
+      listProduk,
+      listProdukAkhir
+    } = req.body;
+
+    // Buat objek transaksi baru
+    const newTransaksi = new Transaksi({
+      nomorAntrian,
+      inProcess,
+      metodePembayaran,
+      date,
+      time,
+      listProduk,
+      listProdukAkhir
+    });
+
+    // Simpan transaksi ke database
+    await newTransaksi.save();
+
+    res.status(201).json({ message: 'Transaksi berhasil ditambahkan', data: newTransaksi });
+  } catch (error) {
+    res.status(500).json({ message: 'Gagal menambahkan transaksi', error: error.message });
+  }
+});
 router.get("/produk", async (req, res) => {
   try {
     const data = await Produk.find();
@@ -237,6 +266,43 @@ router.put('/produk/:id', async (req, res) => {
     res.status(200).json({ message: 'Produk berhasil diperbarui', data: produk });
   } catch (error) {
     res.status(500).json({ message: 'Gagal memperbarui produk', error: error.message });
+  }
+});
+
+
+router.delete('/produk/:id', async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    const produk = await Produk.findById(productId);
+
+    if (!produk) {
+      return res.status(404).json({ message: 'Produk tidak ditemukan' });
+    }
+
+    // Delete the product
+    await produk.remove();
+
+    res.status(200).json({ message: 'Produk berhasil dihapus', data: produk });
+  } catch (error) {
+    res.status(500).json({ message: 'Gagal menghapus produk', error: error.message });
+  }
+});
+
+router.delete("/transaksi/:id", async (req, res) => {
+  try {
+    const transaksiId = req.params.id;
+
+    // Cari transaksi berdasarkan ID dan hapus
+    const deletedTransaksi = await Transaksi.findByIdAndDelete(transaksiId);
+
+    if (!deletedTransaksi) {
+      return res.status(404).json({ message: 'Transaksi tidak ditemukan' });
+    }
+
+    res.status(200).json({ message: 'Transaksi berhasil dihapus', data: deletedTransaksi });
+  } catch (error) {
+    res.status(500).json({ message: 'Gagal menghapus transaksi', error: error.message });
   }
 });
 
