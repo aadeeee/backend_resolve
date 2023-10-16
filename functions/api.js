@@ -53,7 +53,6 @@ const UserSchema = new mongoose.Schema({
   email: String,
   noHp: Number,
   password: String,
-  profilePictures: String,
   jadwal: String,
 });
 
@@ -207,15 +206,7 @@ router.get("/product/:id", async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 });
-router.get("/detailProduct/:id", async (req, res) => {
-  try {
-    id = req.params.id;
-    const data = await Barang.findById(id);
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(404).json({ message: error.message });
-  }
-});
+
 
 router.post("/register", [checkDuplicateUsernameOrEmail], (req, res) => {
   const user = new User({
