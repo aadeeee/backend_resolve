@@ -39,8 +39,9 @@ const TransaksiSchema = new mongoose.Schema({
   metodePembayaran: String,
   date: String,
   time: String,
-  listProduk: Map,
-  listProdukAkhir: Array,
+  qty: Number,
+  price: Number,
+  namaProduk: String,
 });
 
 const Transaksi = mongoose.model("Transaksi", TransaksiSchema);
@@ -132,8 +133,9 @@ router.post("/transaksi", async (req, res) => {
       metodePembayaran,
       date,
       time,
-      listProduk,
-      listProdukAkhir
+      qty,
+      price,
+      namaProduk
     } = req.body;
 
     // Buat objek transaksi baru
@@ -143,8 +145,9 @@ router.post("/transaksi", async (req, res) => {
       metodePembayaran,
       date,
       time,
-      listProduk,
-      listProdukAkhir
+      qty,
+      price,
+      namaProduk
     });
 
     // Simpan transaksi ke database
@@ -218,7 +221,6 @@ router.post("/register", [checkDuplicateUsernameOrEmail], (req, res) => {
     password: bcrypt.hashSync(req.body.password, 8),
     profilePictures: req.body.profilePictures,
     jadwal: req.body.jadwal,
-    isOwnwer: req.body.isOwnwer,
     isActive: req.body.isActive,
   });
 
