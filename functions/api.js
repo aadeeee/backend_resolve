@@ -158,6 +158,27 @@ router.post("/transaksi", async (req, res) => {
     res.status(500).json({ message: 'Gagal menambahkan transaksi', error: error.message });
   }
 });
+
+router.put("/transaksi/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { inProcess } = req.body;
+
+    const transaksi = await Transaksi.findById(id);
+
+    if (!transaksi) {
+      return res.status(404).json({ message: 'Transaksi tidak ditemukan' });
+    }
+
+    transaksi.inProcess = inProcess;
+    await transaksi.save();
+
+    res.status(200).json({ message: 'Nilai inProcess berhasil diubah', data: transaksi });
+  } catch (error) {
+    res.status(500).json({ message: 'Gagal memperbarui nilai inProcess transaksi', error: error.message });
+  }
+});
+
 router.get("/produk", async (req, res) => {
   try {
     const data = await Produk.find();
