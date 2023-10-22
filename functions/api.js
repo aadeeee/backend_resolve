@@ -11,8 +11,6 @@ const router = Router();
 const mongoString = process.env.DATABASE_URL;
 
 
-const secret = "asdf234234124dfasdf";
-
 mongoose.connect(mongoString);
 const database = mongoose.connection;
 
