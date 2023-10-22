@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 const router = Router(); 
 const mongoString = process.env.DATABASE_URL;
-import jwt from "jsonwebtoken";
+
 
 const secret = "asdf234234124dfasdf";
 
