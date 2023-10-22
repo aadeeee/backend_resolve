@@ -9,6 +9,9 @@ const app = express();
 app.use(express.json());
 const router = Router(); 
 const mongoString = process.env.DATABASE_URL;
+import jwt from "jsonwebtoken";
+
+const secret = "asdf234234124dfasdf";
 
 mongoose.connect(mongoString);
 const database = mongoose.connection;
@@ -54,12 +57,11 @@ const UserSchema = new mongoose.Schema({
   email: String,
   noHp: Number,
   password: String,
-  jadwal: String,
 });
 
 const User = mongoose.model("User", UserSchema);
 
-export const verifyToken = (req, res, next) => {
+ const verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
 
   if (!token) {
@@ -240,9 +242,6 @@ router.post("/register", [checkDuplicateUsernameOrEmail], (req, res) => {
     gender: req.body.gender,
     noHp: req.body.noHp,
     password: bcrypt.hashSync(req.body.password, 8),
-    profilePictures: req.body.profilePictures,
-    jadwal: req.body.jadwal,
-    isActive: req.body.isActive,
   });
 
   user.save((err, user) => {
@@ -346,9 +345,6 @@ router.post("/login", (req, res) => {
       {
         id: user.id,
         username: user.username,
-        email: user.email,
-        gender: user.gender,
-        noHp: user.noHp,
       },
       secret,
       {
@@ -359,9 +355,6 @@ router.post("/login", (req, res) => {
     res.status(200).send({
       id: user._id,
       username: user.username,
-      email: user.email,
-      gender: user.gender,
-      noHp: user.noHp,
       accessToken: token,
     });
   });
