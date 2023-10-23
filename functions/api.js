@@ -231,43 +231,43 @@ router.get("/product/:id", async (req, res) => {
 });
 
 
-// router.post("/register", [checkDuplicateUsernameOrEmail], (req, res) => {
-//   const user = new User({
-//     name: req.body.name,
-//     username: req.body.username,
-//     email: req.body.email,
-//     gender: req.body.gender,
-//     noHp: req.body.noHp,
-//     password: req.body.password,
-//   });
+router.post("/register", [checkDuplicateUsernameOrEmail], (req, res) => {
+  const user = new User({
+    name: req.body.name,
+    username: req.body.username,
+    email: req.body.email,
+    gender: req.body.gender,
+    noHp: req.body.noHp,
+    password: req.body.password,
+  });
 
-//   user.save((err, user) => {
-//     if (err) {
-//       res.status(500).send({ message: err });
-//       return;
-//     } else {
-//       res.send({ message: "User was registered successfully!" });
-//     }
-//   });
-// });
-
-router.post('/register', async (req, res) => {
-  try {
-    const { name, username, email, gender, noHp, password } = req.body;
-
-    // Buat objek produk baru
-    const newUser = new User({
-      name, username, email, gender, noHp, password
-    });
-
-    // Simpan produk ke database
-    await newUser.save();
-
-    res.status(201).json({ message: 'User berhasil ditambahkan', data: newUser });
-  } catch (error) {
-    res.status(500).json({ message: 'Gagal menambahkan user', error: error.message });
-  }
+  user.save((err, newUser) => {
+    if (err) {
+      res.status(500).send({ message: err });
+    } else {
+      res.send({ message: "User was registered successfully!", user: newUser });
+    }
+  });
 });
+
+
+// router.post('/register', async (req, res) => {
+//   try {
+//     const { name, username, email, gender, noHp, password } = req.body;
+
+//     // Buat objek produk baru
+//     const newUser = new User({
+//       name, username, email, gender, noHp, password
+//     });
+
+//     // Simpan produk ke database
+//     await newUser.save();
+
+//     res.status(201).json({ message: 'User berhasil ditambahkan', data: newUser });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Gagal menambahkan user', error: error.message });
+//   }
+// });
 
 router.put('/produk/:id', async (req, res) => {
   try {
