@@ -123,7 +123,14 @@ router.get("/transaksi", async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 });
-
+router.get("/register", async (req, res) => {
+  try {
+    const data = await User.find();
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+});
 router.post("/transaksi", async (req, res) => {
   try {
     const {
