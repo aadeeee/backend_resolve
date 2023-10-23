@@ -255,7 +255,7 @@ router.post("/register", [checkDuplicateUsernameOrEmail], async (req, res) => {
     // Simpan pengguna ke database
     await newUser.save();
 
-    res.status(201).json({ message: 'Pengguna berhasil terdaftar', data: newUser });
+    res.status(201).json({ message: 'Pengguna berhasil terdaftar', data: newUser }); 
   } catch (error) {
     res.status(500).json({ message: 'Gagal mendaftarkan pengguna', error: error.message });
   }
