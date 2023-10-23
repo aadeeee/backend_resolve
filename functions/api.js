@@ -241,14 +241,15 @@ router.post("/register", [checkDuplicateUsernameOrEmail], (req, res) => {
     password: req.body.password,
   });
 
-  user.save((err, newUser) => {
+  user.save((err, savedUser) => {
     if (err) {
       res.status(500).send({ message: err });
     } else {
-      res.send({ message: "User was registered successfully!", user: newUser });
+      res.send({ message: "User was registered successfully!", user: savedUser });
     }
   });
 });
+
 
 
 // router.post('/register', async (req, res) => {
