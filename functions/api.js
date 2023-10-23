@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { secret } from "./jwt/authjwt";
+const secret = "asdf234234124dfasdf";
 const app = express();
 app.use(express.json());
 const router = Router(); 
