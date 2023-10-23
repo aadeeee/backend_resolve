@@ -231,23 +231,34 @@ router.get("/product/:id", async (req, res) => {
 });
 
 
-router.post("/register", [checkDuplicateUsernameOrEmail], (req, res) => {
-  const user = new User({
-    name: req.body.name,
-    username: req.body.username,
-    email: req.body.email,
-    gender: req.body.gender,
-    noHp: req.body.noHp,
-    password: req.body.password,
-  });
+router.post("/register", [checkDuplicateUsernameOrEmail], async (req, res) => {
+  try {
+    const {
+      name,
+      username,
+      email,
+      gender,
+      noHp,
+      password
+    } = req.body;
 
-  user.save((err, savedUser) => {
-    if (err) {
-      res.status(500).send({ message: err });
-    } else {
-      res.send({ message: "User was registered successfully!", user: savedUser });
-    }
-  });
+    // Buat objek pengguna baru
+    const newUser = new User({
+      name,
+      username,
+      email,
+      gender,
+      noHp,
+      password
+    });
+
+    // Simpan pengguna ke database
+    await newUser.save();
+
+    res.status(201).json({ message: 'Pengguna berhasil terdaftar', data: newUser });
+  } catch (error) {
+    res.status(500).json({ message: 'Gagal mendaftarkan pengguna', error: error.message });
+  }
 });
 
 
