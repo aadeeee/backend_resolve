@@ -2,7 +2,6 @@ import express ,{Router}from "express";
 import serverless from "serverless-http";
 import mongoose from "mongoose";
 import cors from "cors";
-import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 const secret = "asdf234234124dfasdf";
 const app = express();
@@ -239,7 +238,7 @@ router.post("/register", [checkDuplicateUsernameOrEmail], (req, res) => {
     email: req.body.email,
     gender: req.body.gender,
     noHp: req.body.noHp,
-    password: bcrypt.hashSync(req.body.password, 8),
+    password: req.body.password,
   });
 
   user.save((err, user) => {
@@ -331,7 +330,7 @@ router.post("/login", (req, res) => {
       return res.status(404).send({ message: "User Not found." });
     }
 
-    var passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
+    // var passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
 
     if (!passwordIsValid) {
       return res.status(401).send({
