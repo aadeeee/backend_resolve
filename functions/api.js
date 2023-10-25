@@ -58,21 +58,6 @@ const UserSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", UserSchema);
 
- const verifyToken = (req, res, next) => {
-  let token = req.headers["x-access-token"];
-
-  if (!token) {
-    return res.status(403).send({ message: "No token provided!" });
-  }
-
-  jwt.verify(token, secret, (err, decoded) => {
-    if (err) {
-      return res.status(401).send({ message: "Unauthorized!" });
-    }
-    req.userId = decoded.id;
-    next();
-  });
-};
 
 const checkDuplicateUsernameOrEmail = (req, res, next) => {
   // Username
@@ -123,6 +108,7 @@ router.get("/transaksi", async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 });
+
 router.get("/register", async (req, res) => {
   try {
     const data = await User.find();
@@ -218,6 +204,7 @@ router.post('/produk', async (req, res) => {
     res.status(500).json({ message: 'Gagal menambahkan produk', error: error.message });
   }
 });
+
 router.get("/transaksi/:id", async (req, res) => {
   try {
     id = req.params.id;
@@ -227,6 +214,7 @@ router.get("/transaksi/:id", async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 });
+
 router.get("/product/:id", async (req, res) => {
   try {
     id = req.params.id;
@@ -237,7 +225,6 @@ router.get("/product/:id", async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 });
-
 
 router.post("/register", [checkDuplicateUsernameOrEmail], async (req, res) => {
   try {
@@ -338,29 +325,13 @@ router.delete("/transaksi/:id", async (req, res) => {
 
 
 router.post("/login", (req, res) => {
-  User.findOne({
-    username: req.body.username,
-  }).exec((err, user) => {
+  User.findOne({ username: req.body.username }).exec((err, user) => {
     if (err) {
       return res.status(500).send({ message: err });
     }
 
-    if (!user) {
-      return res.status(404).send({ message: "User Not found." });
-    }
-
-    if (user.password === req.body.password) {
-      var token = jwt.sign(
-        {
-          id: user.id,
-          username: user.username,
-        },
-        secret,
-        {
-          expiresIn: 86400,
-        }
-      );
-
+    if (user) {
+      // Pengguna ditemukan di database
       return res.status(200).send({
         id: user._id,
         username: user.username,
@@ -368,16 +339,16 @@ router.post("/login", (req, res) => {
         gender: user.gender,
         noHp: user.noHp,
         name: user.name,
-        accessToken: token,
       });
     } else {
+      // Pengguna tidak ditemukan di database
       return res.status(401).send({
-        accessToken: null,
-        message: "Invalid Password!",
+        message: "User Not found.",
       });
     }
   });
 });
+
 
 
 
