@@ -131,6 +131,7 @@ router.get("/register", async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 });
+
 router.post("/transaksi", async (req, res) => {
   try {
     const {
@@ -270,24 +271,6 @@ router.post("/register", [checkDuplicateUsernameOrEmail], async (req, res) => {
 
 
 
-// router.post('/register', async (req, res) => {
-//   try {
-//     const { name, username, email, gender, noHp, password } = req.body;
-
-//     // Buat objek produk baru
-//     const newUser = new User({
-//       name, username, email, gender, noHp, password
-//     });
-
-//     // Simpan produk ke database
-//     await newUser.save();
-
-//     res.status(201).json({ message: 'User berhasil ditambahkan', data: newUser });
-//   } catch (error) {
-//     res.status(500).json({ message: 'Gagal menambahkan user', error: error.message });
-//   }
-// });
-
 router.put('/produk/:id', async (req, res) => {
   try {
     const productId = req.params.id; 
@@ -359,44 +342,44 @@ router.post("/login", (req, res) => {
     username: req.body.username,
   }).exec((err, user) => {
     if (err) {
-      res.status(500).send({ message: err });
-      return;
+      return res.status(500).send({ message: err });
     }
 
     if (!user) {
       return res.status(404).send({ message: "User Not found." });
     }
 
-    // var passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
+    if (user.password === req.body.password) {
+      var token = jwt.sign(
+        {
+          id: user.id,
+          username: user.username,
+        },
+        secret,
+        {
+          expiresIn: 86400,
+        }
+      );
 
-    if (!passwordIsValid) {
+      return res.status(200).send({
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        gender: user.gender,
+        noHp: user.noHp,
+        name: user.name,
+        accessToken: token,
+      });
+    } else {
       return res.status(401).send({
         accessToken: null,
         message: "Invalid Password!",
       });
     }
-    var token = jwt.sign(
-      {
-        id: user.id,
-        username: user.username,
-      },
-      secret,
-      {
-        expiresIn: 86400, 
-      }
-    );
-
-    res.status(200).send({
-      id: user._id,
-      username: user.username,
-      email: user.email,
-      gender: user.gender,
-      noHp: user.noHp,
-      name: user.name,
-      accessToken: token,
-    });
   });
 });
+
+
 
 
 export const handler = serverless(app);
