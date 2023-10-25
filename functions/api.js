@@ -389,6 +389,10 @@ router.post("/login", (req, res) => {
     res.status(200).send({
       id: user._id,
       username: user.username,
+      email: user.email,
+      gender: user.gender,
+      noHp: user.noHp,
+      name: user.name,
       accessToken: token,
     });
   });
