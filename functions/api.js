@@ -331,23 +331,28 @@ router.post("/login", (req, res) => {
     }
 
     if (user) {
-      // Pengguna ditemukan di database
-      return res.status(200).send({
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        gender: user.gender,
-        noHp: user.noHp,
-        name: user.name,
-      });
+      if (req.body.password === user.password) {
+        return res.status(200).send({
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          gender: user.gender,
+          noHp: user.noHp,
+          name: user.name,
+        });
+      } else {
+        return res.status(401).send({
+          message: "Incorrect Password.",
+        });
+      }
     } else {
-      // Pengguna tidak ditemukan di database
       return res.status(401).send({
         message: "User Not found.",
       });
     }
   });
 });
+
 
 
 
